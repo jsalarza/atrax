@@ -63,41 +63,45 @@ def literatures(request, filter_by):
 
 
 def login_user(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                # albums = Album.objects.filter(user=request.user)
-                lit_types = LiteratureType.objects.all()
-                return render(request, 'portal/index.html', {'lit_types': lit_types})
+    if request.user.is_authenticated():
+        return render(request, 'portal/index.html')
+    else:
+        if request.method == "POST":
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    # albums = Album.objects.filter(user=request.user)
+                    lit_types = LiteratureType.objects.all()
+                    return render(request, 'portal/index.html', {'lit_types': lit_types})
+                else:
+                    return render(request, 'portal/login.html', {'error_message': 'Your account has been disabled'})
             else:
-                return render(request, 'portal/login.html', {'error_message': 'Your account has been disabled'})
-        else:
-            return render(request, 'portal/login.html', {'error_message': 'Invalid username or password'})
-    return render(request, 'portal/login.html')
+                return render(request, 'portal/login.html', {'error_message': 'Invalid username or password'})
+        return render(request, 'portal/login.html')
 
 
 def register(request):
-    form = UserForm(request.POST or None)
-    if form.is_valid():
-        user = form.save(commit=False)
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        user.set_password(password)
-        user.save()
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-               # lit_types = LiteratureType.objects.filter(user=request.user)
-                return render(request, 'portal/index.html')
-    context = {
-        "form": form,
-    }
-    return render(request, 'portal/register.html', context)
+    if request.user.is_authenticated():
+        return render(request, 'portal/index.html')
+    else:
+        form = UserForm(request.POST or None)
+        if form.is_valid():
+            user = form.save(commit=False)
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user.set_password(password)
+            user.save()
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    return render(request, 'portal/login.html')
+        context = {
+            "form": form,
+        }
+        return render(request, 'portal/register.html', context)
 
 
 def logout_user(request):
