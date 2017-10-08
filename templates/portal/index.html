@@ -1,0 +1,75 @@
+{% extends 'portal/base.html' %}
+{% block lit_types_active %}active{% endblock %}
+
+{% block body %}
+<div class="albums-container container-fluid">
+
+    <!-- Literature Types -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>All Literature Types</h3>
+        </div>
+        {% if lit_types %}
+            {% for lit_type in lit_types %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h2>{{ lit_type.lit_type_name }}</h2>
+
+                            <!-- View Details -->
+                            <a href="{% url 'portal:detail' lit_type.id %}" class="btn btn-primary btn-sm" role="button">View all</a>
+
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- If user searches and there are songs -->
+    {% if literatures %}
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Literatures</h3>
+            </div>
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Literature Title</th>
+                                    <th>Author</th>
+                                    <th>File</th>
+                                    <th>Literature Type</th>
+                                    <th>Favorite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for literature in literatures %}
+                                    <tr>
+                                        <td>{{ literatures.lit_title }}</td>
+                                        <td>{{ literature.author }}</td>
+                                        <td>
+                                            <a target="_blank" href="{{ literature.lit_file.url }}">
+                                                <button type="button" class="btn btn-success btn-xs">
+                                                    <span class="glyphicon glyphicon-play"></span>&nbsp; Download
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'portal:detail' literature.lit_type.id %}">{{ literature.lit_type.lit_type_name }}</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'portal/base.html' %}
+{% block title %}{{ lit_type }}{% endblock %}
+{% block lit_types_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid songs-container">
+
+    <div class="row">
+
+        <!-- Left Literature Type Info -->
+        <div class="col-sm-4 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h1>{{ lit_type.lit_type_name }}</small></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Literature Info -->
+        <div class="col-sm-8 col-md-9">
+
+            <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                <li role="presentation" class="active"><a href="{% url 'portal:detail' lit_type.id %}">View All</a></li>
+                <li role="presentation"><a href="{% url 'portal:contribute' lit_type.id %}">Contribute</a></li>
+            </ul>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <h3>All Literature</h3>
+
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>File</th>
+                            <th>Favorite</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for literature in lit_type.literature_set.all %}
+                            <tr>
+                                <td>{{ literature.lit_title }}</td>
+                                <td>
+                                    <a target="_blank" href="{{ literature.lit_file.url }}">
+                                        <button type="button" class="btn btn-success btn-xs">
+                                            <span class="glyphicon glyphicon-play"></span>&nbsp; Download
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
